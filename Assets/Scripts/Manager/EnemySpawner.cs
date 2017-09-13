@@ -23,7 +23,10 @@ public class EnemySpawner : MonoBehaviour {
 
             enemySpawnPoints.Add(enemySpawnPoint);
         }
-	}
+
+        SpawnEnemies();
+
+    }
 
     // 네트워크 처리 필요
     public void SpawnEnemies()
@@ -46,6 +49,7 @@ public class EnemySpawner : MonoBehaviour {
             Health h = newEnemy.GetComponent<Health>();
             h.currentHealth = 100;
             h.OnChangeHealth();
+            h.destroyOnDeath = true;
             h.IsEnemy = true;
 
             i++;

@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour {
 
         Bullet b = bullet.GetComponent<Bullet>();
         b.PlayerFrom = this.gameObject;
-        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.up * 6;
+        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.up * 6.0f;
 
         Destroy(bullet, 3.0f);
     }
