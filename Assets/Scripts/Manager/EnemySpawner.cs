@@ -24,35 +24,36 @@ public class EnemySpawner : MonoBehaviour {
             enemySpawnPoints.Add(enemySpawnPoint);
         }
 
-        SpawnEnemies();
+        //SpawnEnemies();
 
     }
 
     // 네트워크 처리 필요
-    public void SpawnEnemies()
+    public void SpawnEnemies(NetworkManager.EnemyJSON enemiesJSON)
     {
-        int i = 0;
+        //int i = 0;
 
-        foreach(SpawnPoint sp in enemySpawnPoints)
+        //foreach(SpawnPoint sp in enemySpawnPoints)
+        foreach (NetworkManager.UserJSON enemyJSON in enemiesJSON.enemies)
         {
-            Vector3 position = sp.transform.position;
-            Quaternion rotation = sp.transform.rotation;
+            Vector3 position = new Vector3(enemyJSON.position[0], enemyJSON.position[1], enemyJSON.position[2]);//sp.transform.position;
+            Quaternion rotation = Quaternion.Euler(enemyJSON.rotation[0], enemyJSON.rotation[1], enemyJSON.rotation[2]);//sp.transform.rotation;
 
             GameObject newEnemy = Instantiate(enemy, position, rotation) as GameObject;
 
             // 네트워크에서 플레이어의 이름을 받아서 넣어준다.
-            newEnemy.name = i + " Enemy";
+            newEnemy.name = enemyJSON.name;//i + " Enemy";
 
             PlayerController pc = newEnemy.GetComponent<PlayerController>();
             pc.isLocalPlayer = false;
 
             Health h = newEnemy.GetComponent<Health>();
-            h.currentHealth = 100;
+            h.currentHealth = enemyJSON.health;//100;
             h.OnChangeHealth();
             h.destroyOnDeath = true;
             h.IsEnemy = true;
 
-            i++;
+            //i++;
         }
     }
 	

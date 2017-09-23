@@ -501,7 +501,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 1124068672374022, guid: 3538a6a3bee88524582d67a47736cb4e,
     type: 2}
   bulletSpawn: {fileID: 4489732100228210}
-  isLocalPlayer: 1
+  isLocalPlayer: 0
 --- !u!136 &136688535534072072
 CapsuleCollider:
   m_ObjectHideFlags: 1
