@@ -384,7 +384,7 @@ MonoBehaviour:
   destroyOnDeath: 0
   currentHealth: 100
   IsEnemy: 0
-  healthBar: {fileID: 224296449901178940}
+  healthBar: {fileID: 224261358256649610}
 --- !u!114 &114330980184804146
 MonoBehaviour:
   m_ObjectHideFlags: 1

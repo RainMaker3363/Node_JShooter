@@ -44,13 +44,17 @@ public class PlayerController : MonoBehaviour {
 
         if(currentPosition != oldPosition)
         {
-            // 네트워크 보간 처리
+            // 네트워크 처리
+            NetworkManager.Instance.GetComponent<NetworkManager>().CommandMove(transform.position);
+
             oldPosition = currentPosition;
         }
 
         if(currentRotation != oldRotation)
         {
-            // 네트워크 보간 처리
+            // 네트워크 처리
+            NetworkManager.Instance.GetComponent<NetworkManager>().CommandRotate(transform.rotation);
+
             oldRotation = currentRotation;
         }
 
@@ -58,8 +62,10 @@ public class PlayerController : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.Space))
         {
             // 네트워크 처리
+            NetworkManager n = NetworkManager.Instance.GetComponent<NetworkManager>();
+            n.CommandShoot();
 
-            CommandFire();
+            //CommandFire();
         }
 	}
 

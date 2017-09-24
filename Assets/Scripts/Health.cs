@@ -24,7 +24,8 @@ public class Health : MonoBehaviour {
         currentHealth -= amount;
 
         // 네트워크 처리
-
+        NetworkManager n = NetworkManager.Instance.GetComponent<NetworkManager>();
+        n.CommandHealthChange(playerFrom, this.gameObject, amount, IsEnemy);
     }
 
     public void OnChangeHealth()

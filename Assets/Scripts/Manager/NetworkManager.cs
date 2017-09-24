@@ -80,6 +80,34 @@ public class NetworkManager : MonoBehaviour {
         canvas.gameObject.SetActive(false);
     }
 
+    public void CommandMove(Vector3 vec3)
+    {
+        string data = JsonUtility.ToJson(new PositionJSON(vec3));
+
+        socket.Emit("player move", new JSONObject(data));
+    }
+
+    public void CommandRotate(Quaternion quat)
+    {
+        string data = JsonUtility.ToJson(new RotationJSON(quat));
+
+        socket.Emit("player turn", new JSONObject(data));
+    }
+
+    public void CommandShoot()
+    {
+        print("Shoot");
+        socket.Emit("player shoot");
+    }
+
+    public void CommandHealthChange(GameObject playerFrom, GameObject playerTo, int healthChage, bool isEnemy)
+    {
+        print("Health Change command");
+
+        HealthChangeJSON healthChangeJSON = new HealthChangeJSON(playerTo.name, healthChage, playerFrom.name, isEnemy);
+        socket.Emit("health", new JSONObject(JsonUtility.ToJson(healthChangeJSON)));
+    }
+
     #endregion
 
     #region Listening
@@ -151,22 +179,70 @@ public class NetworkManager : MonoBehaviour {
 
     void OnPlayerMove(SocketIOEvent socketIOEvent)
     {
+        string data = socketIOEvent.data.ToString();
+        UserJSON userJSON = UserJSON.CreateFromJSON(data);
 
+        Vector3 position = new Vector3(userJSON.position[0], userJSON.position[1], userJSON.position[2]);
+        
+        // 만약 현재 플레이어에 관한 것이면 아무것도 하지 않는다.
+        if(userJSON.name == playerNameInput.text)
+        {
+            return;
+        }
+
+        GameObject p = GameObject.Find(userJSON.name) as GameObject;
+
+        if(p != null)
+        {
+            p.transform.position = position;
+        }
     }
 
     void OnPlayerTurn(SocketIOEvent socketIOEvent)
     {
+        string data = socketIOEvent.data.ToString();
+        UserJSON userJSON = UserJSON.CreateFromJSON(data);
 
+        Quaternion rotation = Quaternion.Euler(userJSON.rotation[0], userJSON.rotation[1], userJSON.rotation[2]);
+
+        // 만약 현재 플레이어에 관한 것이면 아무것도 하지 않는다.
+        if (userJSON.name == playerNameInput.text)
+        {
+            return;
+        }
+
+        GameObject p = GameObject.Find(userJSON.name) as GameObject;
+
+        if (p != null)
+        {
+            p.transform.rotation = rotation;
+        }
     }
 
     void OnPlayerShoot(SocketIOEvent socketIOEvent)
     {
+        string data = socketIOEvent.data.ToString();
+        ShootJSON shootJSON = ShootJSON.CreateFromJSON(data);
 
+        GameObject p = GameObject.Find(shootJSON.name);
+
+        // 플레이어의 스크립트로부터 총알 오브젝트를 동적 생성한다.
+        PlayerController pc = p.GetComponent<PlayerController>();
+        pc.CommandFire();
     }
 
     void OnHealth(SocketIOEvent socketIOEvent)
     {
+        print("changing the health");
 
+        // 플레이어들의 체력이 변하면 호출된다.
+        string data = socketIOEvent.data.ToString();
+        UserHealthJSON userHealthJSON = UserHealthJSON.CreateFromJSON(data);
+
+        GameObject p = GameObject.Find(userHealthJSON.name);
+        Health h = p.GetComponent<Health>();
+        h.currentHealth = userHealthJSON.health;
+        h.OnChangeHealth();
     }
 
     void OnOtherPlayerDisConnect(SocketIOEvent socketIOEvent)
